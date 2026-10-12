@@ -1,0 +1,74 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, master]
+    paths:
+      - 'index.html'
+      - 'styles.css'
+      - 'app.js'
+      - 'manifest.json'
+      - 'mascot.svg'
+      - 'icon-*.png'
+      - 'package.json'
+      - 'capacitor.config.json'
+      - '.github/workflows/build-android-apk.yml'
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  build-debug:
+    name: Build Debug APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Install web dependencies
+        run: npm install
+
+      - name: Check JavaScript and smoke tests
+        run: npm test
+
+      - name: Prepare Capacitor web assets
+        run: |
+          mkdir -p www
+          cp index.html styles.css app.js manifest.json sw.js mascot.svg icon-192.png icon-512.png www/
+
+      - name: Generate Android project
+        run: npx cap add android
+
+      - name: Sync Capacitor
+        run: npx cap sync android
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.11.1'
+
+      - name: Build Debug APK
+        working-directory: android
+        run: gradle --no-daemon assembleDebug
+
+      - name: Upload Debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: hesabino-debug-apk
+          path: android/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+          retention-days: 14
