@@ -294,7 +294,7 @@ render();
 
 ;
 
-const CK=()=>S.ck=S.ck||[],CC=()=>S.cc=S.cc||[];
+function CK(){return S.ck=S.ck||[]}function CC(){return S.cc=S.cc||[]}
 P.bell='M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0';
 const dr=x=>x.a-(x.paid||0),dayAdd=(s,n)=>{const d=dt(s);d.setDate(d.getDate()+n);return d.toLocaleDateString('sv')},dlf=s=>Math.round((dt(s)-dt(D()))/864e5);
 const duet=dl=>dl<0?`${(-dl).toLocaleString('fa-IR')} روز از سررسید گذشته`:dl?`${dl.toLocaleString('fa-IR')} روز دیگر سررسید`:'امروز سررسید است';
@@ -328,7 +328,7 @@ else if(a==='day')daySheet(D());else if(a==='dd')daySheet(dayAdd(DY,+n));else if
 else if(a==='dg')debtLines(n);else if(a==='db')debtSheet();
 else if(a==='dsave'){const t=val('dn'),am=+dig(val('da')),d=jv(),du=$('#dh').checked?jv2('u'):'';if(!d||du===null)return;if(!t||!am)return['dn','da'].forEach(q=>val(q)||bad(q));const o={k:'debt',t,w:val('dw'),ph:dig(val('dp')),a:am,s:+$('#ds').value,d,due:du},ed=X();if(ed)Object.assign(ed,o);else{const x=T('debt',t,am,d);Object.assign(x,o);S.tx.push(x)}save();render();toast('ذخیره شد');debtSheet()}
 else if(a==='dpay'){const x=X();open(`<button class="link" data-v="dg" data-n="${esc(x.t)}">‹ بازگشت</button><h2>${x.s<0?'ثبت پرداخت':'ثبت دریافت'} - ${esc(x.t)}</h2>${inp('pm','مبلغ (تومان)',1,dr(x))}<small style="color:var(--mu)">مانده: ${fa(dr(x))} تومان. مبلغ کمتر یعنی پرداخت بخشی.</small><br><br><button class="btn" data-v="dpay2" data-i="${x.id}">ثبت</button>`)}
-else if(a==='dpay2'){const x=X(),m=Math.min(+dig(val('pm'))||0,dr(x));if(!m)return bad('pm');x.paid=(x.paid||0)+m;S.tx.push(T(x.s<0?'exp':'inc',(x.s<0?'پرداخت بدهی به ':'دریافت از ')+x.t,m,D()));save();render();toast('ثبت شد');dr(x)>0?debtLines(x.t):debtSheet()}
+else if(a==='dpay2'){const x=X();if(!x)return;const m=Math.min(+dig(val('pm'))||0,dr(x));if(!m)return bad('pm');x.paid=(x.paid||0)+m;S.tx.push(T(x.s<0?'exp':'inc',(x.s<0?'پرداخت بدهی به ':'دریافت از ')+x.t,m,D()));save();render();toast('ثبت شد');dr(x)>0?debtLines(x.t):debtSheet()}
 else if(a==='drem'){const x=X();open(`<button class="link" data-v="dg" data-n="${esc(x.t)}">‹ بازگشت</button><h2>پیام یادآوری</h2>`+shr(`سلام ${x.t} عزیز 🌹\nیادآوری مانده‌ی حساب شما بابت «${x.w||'کار انجام‌شده'}»: ${fa(dr(x))} تومان${x.due?'\nسررسید: '+jf(x.due,{day:'numeric',month:'long',year:'numeric'}):''}\nلطفاً در اولین فرصت اقدام فرمایید. با تشکر\n${shop().n}\n📍 ${shop().a}`,x.ph))}});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)notify()});
 render();notify();
