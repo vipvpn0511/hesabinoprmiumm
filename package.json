@@ -1,0 +1,23 @@
+{
+  "name": "hesabino-v30-ultimate",
+  "version": "30.0.0",
+  "private": true,
+  "description": "حسابینو V30 Ultimate - مدیریت مالی فارسی",
+  "scripts": {
+    "check": "node --check app.js && node tests/smoke-test.js",
+    "test": "npm run check",
+    "android:sync": "npx cap sync android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^7.4.3",
+    "@capacitor/app": "^7.1.0",
+    "@capacitor/core": "^7.4.3",
+    "@capacitor/filesystem": "^7.1.4",
+    "@capacitor/local-notifications": "^7.1.2",
+    "@capacitor/share": "^7.0.2",
+    "@capgo/capacitor-native-biometric": "^7.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.4.3"
+  }
+}

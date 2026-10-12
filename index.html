@@ -1,1 +1,45 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
 
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>حسابینو | مدیریت مالی</title>
+<meta name="description" content="مدیریت مالی شخصی و مغازه؛ آفلاین و خصوصی"><link rel="manifest" href="manifest.json"><link rel="icon" href="icon-192.png" type="image/png"><link rel="apple-touch-icon" href="icon-192.png"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="حسابینو"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="stylesheet" href="styles.css">
+<style>
+.ai-home{display:flex;align-items:center;gap:12px;width:100%;text-align:right;border:1px solid rgba(52,117,235,.24);border-radius:20px;padding:12px;margin:12px 0;background:var(--g);color:var(--tx);cursor:pointer}
+.ai-home img{width:76px;height:76px;flex-shrink:0}.ai-home span{display:grid;gap:5px}.ai-home small{color:var(--mu);line-height:1.8}.ai-home em{color:var(--pr);font-style:normal;font-weight:700;font-size:12px}
+.ai-intro{display:flex;align-items:center;gap:10px;border-radius:16px;padding:12px;margin:12px 0}.ai-intro img{width:78px;height:78px}.ai-intro p{font-size:13px;line-height:1.9;margin:4px 0}
+.ai-quick{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0}.ai-quick button{font-size:12px}.ai-result{padding:14px;border-radius:14px;line-height:2;margin-top:12px;min-height:64px}
+@media(prefers-reduced-motion:reduce){.ai-home,.ai-intro{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<nav><div class="nb g">
+<button class="on" data-a="home"><span><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8v9a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1z"/></svg></span>خانه</button>
+<button data-a="list" data-k="ins"><span><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v14H4zM4 10h16M8 3v4M16 3v4"/></svg></span>اقساط</button>
+<button class="fab" data-a="add" data-k="exp" aria-label="ثبت جدید">+</button>
+<button data-a="rep"><span><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20V10M12 20V4M19 20v-7"/></svg></span>گزارش‌ها</button>
+<button data-a="set"><span><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h9M17 7h3M4 17h3M11 17h9M15 7m-2 0a2 2 0 104 0 2 2 0 10-4 0M9 17m-2 0a2 2 0 104 0 2 2 0 10-4 0"/></svg></span>تنظیمات</button>
+</div></nav>
+<div class="ov" id="ov"></div>
+<div class="sheet" id="sh" role="dialog" aria-modal="true"></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="app.js" defer></script>
+</body>
+</html>
