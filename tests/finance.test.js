@@ -1,0 +1,18 @@
+const fs = require('fs');
+const path = require('path');
+const root = path.resolve(__dirname, '..');
+const read = f => fs.readFileSync(path.join(root, f), 'utf8');
+const html = read('index.html');
+const js = read('app.js');
+const css = read('styles.css');
+const manifest = JSON.parse(read('manifest.json'));
+const assert = (condition, message) => { if (!condition) throw new Error(message); };
+assert(html.includes('href="styles.css"'), 'styles.css must be linked');
+assert(html.includes('src="app.js"'), 'app.js must be linked');
+assert(html.includes('manifest.json'), 'manifest must be linked');
+assert(js.includes("hesabino-v1"), 'legacy storage key should remain detectable for migration');
+assert(manifest.icons.some(x => x.src === 'icon-192.png'), '192px icon must be declared');
+assert(manifest.icons.some(x => x.src === 'icon-512.png'), '512px icon must be declared');
+assert(css.includes('prefers-color-scheme:dark'), 'dark mode styling should exist');
+assert(html.includes('dir="rtl"'), 'document must be RTL');
+console.log('Smoke tests passed: project structure, PWA manifest, RTL, theme, legacy key.');
