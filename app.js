@@ -294,7 +294,7 @@ render();
 
 ;
 
-const CK=()=>S.ck=S.ck||[],CC=()=>S.cc=S.cc||[];
+function CK(){return S.ck=S.ck||[]}function CC(){return S.cc=S.cc||[]}
 P.bell='M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0';
 const dr=x=>x.a-(x.paid||0),dayAdd=(s,n)=>{const d=dt(s);d.setDate(d.getDate()+n);return d.toLocaleDateString('sv')},dlf=s=>Math.round((dt(s)-dt(D()))/864e5);
 const duet=dl=>dl<0?`${(-dl).toLocaleString('fa-IR')} روز از سررسید گذشته`:dl?`${dl.toLocaleString('fa-IR')} روز دیگر سررسید`:'امروز سررسید است';
@@ -328,7 +328,7 @@ else if(a==='day')daySheet(D());else if(a==='dd')daySheet(dayAdd(DY,+n));else if
 else if(a==='dg')debtLines(n);else if(a==='db')debtSheet();
 else if(a==='dsave'){const t=val('dn'),am=+dig(val('da')),d=jv(),du=$('#dh').checked?jv2('u'):'';if(!d||du===null)return;if(!t||!am)return['dn','da'].forEach(q=>val(q)||bad(q));const o={k:'debt',t,w:val('dw'),ph:dig(val('dp')),a:am,s:+$('#ds').value,d,due:du},ed=X();if(ed)Object.assign(ed,o);else{const x=T('debt',t,am,d);Object.assign(x,o);S.tx.push(x)}save();render();toast('ذخیره شد');debtSheet()}
 else if(a==='dpay'){const x=X();open(`<button class="link" data-v="dg" data-n="${esc(x.t)}">‹ بازگشت</button><h2>${x.s<0?'ثبت پرداخت':'ثبت دریافت'} - ${esc(x.t)}</h2>${inp('pm','مبلغ (تومان)',1,dr(x))}<small style="color:var(--mu)">مانده: ${fa(dr(x))} تومان. مبلغ کمتر یعنی پرداخت بخشی.</small><br><br><button class="btn" data-v="dpay2" data-i="${x.id}">ثبت</button>`)}
-else if(a==='dpay2'){const x=X(),m=Math.min(+dig(val('pm'))||0,dr(x));if(!m)return bad('pm');x.paid=(x.paid||0)+m;S.tx.push(T(x.s<0?'exp':'inc',(x.s<0?'پرداخت بدهی به ':'دریافت از ')+x.t,m,D()));save();render();toast('ثبت شد');dr(x)>0?debtLines(x.t):debtSheet()}
+else if(a==='dpay2'){const x=X();if(!x)return;const m=Math.min(+dig(val('pm'))||0,dr(x));if(!m)return bad('pm');x.paid=(x.paid||0)+m;S.tx.push(T(x.s<0?'exp':'inc',(x.s<0?'پرداخت بدهی به ':'دریافت از ')+x.t,m,D()));save();render();toast('ثبت شد');dr(x)>0?debtLines(x.t):debtSheet()}
 else if(a==='drem'){const x=X();open(`<button class="link" data-v="dg" data-n="${esc(x.t)}">‹ بازگشت</button><h2>پیام یادآوری</h2>`+shr(`سلام ${x.t} عزیز 🌹\nیادآوری مانده‌ی حساب شما بابت «${x.w||'کار انجام‌شده'}»: ${fa(dr(x))} تومان${x.due?'\nسررسید: '+jf(x.due,{day:'numeric',month:'long',year:'numeric'}):''}\nلطفاً در اولین فرصت اقدام فرمایید. با تشکر\n${shop().n}\n📍 ${shop().a}`,x.ph))}});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)notify()});
 render();notify();
@@ -487,176 +487,4 @@ S.tx.filter(x=>x.k==='ins').forEach(x=>{const b=x.t+' — '+fa(x.a)+' تومان
 S.tx.filter(x=>x.k==='debt'&&dr(x)>0&&x.due).forEach(x=>{const b=x.t+' — '+fa(dr(x))+' تومان',t=x.s<0?'پرداخت بدهی':'دریافت طلب';add(t+' فردا',b,dm(x.due,-1),9,0);add(t+' امروز',b,x.due,9,0)});
 CK().filter(x=>x.st==='open').forEach(x=>{const b=x.n+' — '+fa(x.a)+' تومان',t=x.dir>0?'چک دریافتی':'چک پرداختی';add(t+' فردا سررسید است',b,dm(x.due,-1),9,0);add(t+' امروز سررسید است',b,x.due,9,0)});
 out.sort((a,b)=>a.schedule.at-b.schedule.at);const list=out.slice(0,150).map((o,i)=>({id:i+1,...o}));
-list.push({id:900,title:'بستن صندوق',body:'موجودی صندوق را بشمارید و ثبت کنید',schedule:{on:{hour:18,minute:30},allowWhileIdle:true}});
-list.push({id:901,title:'پشتیبان‌گیری',body:'یک نسخه‌ی پشتیبان از حسابینو بگیرید',schedule:{on:{weekday:6,hour:10,minute:0},allowWhileIdle:true}});
-await LN.schedule({notifications:list})}catch(e){window.__lnErr=String(e&&e.message||e)}}
-const go=()=>{clearTimeout(tm);tm=setTimeout(plan,800)};go();document.addEventListener('visibilitychange',()=>{if(document.hidden)go()});
-document.addEventListener('click',async e=>{const b=e.target.closest('[data-v="perm"]');if(!b)return;e.stopImmediatePropagation();e.preventDefault();try{let p=await LN.checkPermissions();if(p.display!=='granted')p=await LN.requestPermissions();if(p.display!=='granted'){b.textContent='اجازه داده نشد؛ از تنظیمات گوشی، اعلان برنامه را روشن کنید';return}await LN.schedule({notifications:[{id:999,title:'حسابینو',body:'اعلان‌ها فعال است ✅',schedule:{at:new Date(Date.now()+5000),allowWhileIdle:true}}]});b.textContent='فعال شد؛ اعلان آزمایشی تا چند ثانیه‌ی دیگر می‌آید';go()}catch(err){b.textContent='خطا: '+(err&&err.message||err)}},true);
-})();
-
-;
-
-function dsub(){const v=S.tx.filter(x=>x.k==='exp'&&x.d===D()).reduce((a,x)=>a+x.a,0);return 'خرج '+(v>=1e6?(v/1e6).toLocaleString('fa-IR',{maximumFractionDigits:1})+' م':fa(v))}
-const wkStart=s=>dayAdd(s,-((dt(s).getDay()+1)%7));
-function setJ(s){const p=jp(s);['y','m','d'].forEach((c,i)=>{const e=$('#j'+c);if(e)e.value=p[i]})}
-function daySheet(s){DY=s||DY||D();LK='day';const t=D(),ws=wkStart(DY),days=[0,1,2,3,4,5,6].map(i=>dayAdd(ws,i)),
-at=d=>S.tx.filter(x=>x.d===d&&(x.k==='inc'||x.k==='exp')),sm=(a,k)=>a.filter(x=>x.k===k).reduce((q,x)=>q+x.a,0),
-W=days.map(d=>{const a=at(d);return{d,i:sm(a,'inc'),e:sm(a,'exp')}}),jm=jp(DY)[1],nd=jm<=6?31:jm<12?30:29,cap=S.bud>0?S.bud/nd:0,
-mx=Math.max(1,...W.map(x=>Math.max(x.i,x.e)),cap*1.15),hh=v=>v>0?Math.max(3,v/mx*105):0,tI=W.reduce((q,x)=>q+x.i,0),tE=W.reduce((q,x)=>q+x.e,0),
-a=at(DY),I=a.filter(x=>x.k==='inc'),E=a.filter(x=>x.k==='exp'),ci=sm(a,'inc'),ce=sm(a,'exp'),pd=dayAdd(DY,-1),pa=at(pd),pi=sm(pa,'inc'),pe=sm(pa,'exp'),
-isT=DY===t,pl=isT?'دیروز':'روز قبل',nl=isT?'امروز':'این روز',wd=d=>jf(d,{weekday:'long'}),dn=d=>jp(d)[2].toLocaleString('fa-IR'),
-cmp=(l,c,p)=>c===p?`${l} با ${pl} برابر است`:p===0?`${l} ${fa(c)} است (${pl} صفر بود)`:`${l} ${fa(Math.abs(c-p))} (${Math.round(Math.abs(c-p)/p*100).toLocaleString('fa-IR')}٪) ${c>p?'بیشتر':'کمتر'} از ${pl} است`;
-const a1=pa.length?`${cmp('درآمد '+nl,ci,pi)}؛ ${cmp('خرج',ce,pe).replace(' از '+pl+' است',' شده').replace(' با '+pl+' برابر است',' برابر است')}.`:`برای مقایسه، ${pl} چیزی ثبت نشده.`;
-const a2=pa.length?`مانده‌ی ${nl} ${fa(ci-ce)} است، یعنی ${fa(Math.abs((ci-ce)-(pi-pe)))} ${(ci-ce)>=(pi-pe)?'بیشتر':'کمتر'} از مانده‌ی ${pl} (${fa(pi-pe)}).`:`مانده‌ی ${nl} ${fa(ci-ce)} تومان است.`;
-const rng=(jp(ws)[1]===jp(days[6])[1]?dn(ws):jf(ws,{day:'numeric',month:'long'}))+' تا '+jf(days[6],{day:'numeric',month:'long',year:'numeric'});
-let sv='',i=0;for(const w of W){const c=340-(i+.5)*340/7,on=w.d===DY,eh=hh(w.e),ih=hh(w.i),over=cap&&w.e>cap;
-sv+=`<g data-v="dsel" data-i="${w.d}" role="button" tabindex="0" aria-label="${wd(w.d)} ${dn(w.d)}: درآمد ${fa(w.i)}، خرج ${fa(w.e)}"><rect x="${c-24}" y="0" width="48" height="168" rx="12" fill="${on?'var(--pr)':'transparent'}" fill-opacity="${on?.12:1}"/>${ih?`<rect x="${c+2}" y="${130-ih}" width="14" height="${ih}" rx="4" fill="var(--gr)"/>`:''}${eh?`<rect x="${c-16}" y="${130-eh}" width="14" height="${eh}" rx="4" fill="${over?'#a5163a':'var(--rd)'}"/>`:''}<text x="${c}" y="147" text-anchor="middle" font-size="11" ${on?'font-weight="700" style="fill:var(--pr)"':'style="fill:var(--mu)"'}>${wd(w.d)}</text><text x="${c}" y="162" text-anchor="middle" font-size="10" ${on?'font-weight="700" style="fill:var(--pr)"':'style="fill:var(--mu)"'}>${dn(w.d)}</text></g>`;i++}
-const cy=130-cap/mx*105,card=(l,v,c)=>dcard(l,v,c);
-open(`<h2>حساب روزانه</h2><div class="row" style="gap:8px;margin-bottom:10px"><button class="ib g" style="border-radius:14px" data-v="wk" data-n="-7" aria-label="هفته‌ی قبل">›</button><div style="flex:1;text-align:center;font-weight:700;font-size:15px">${rng}</div><button class="ib g" style="border-radius:14px" data-v="wk" data-n="7" aria-label="هفته‌ی بعد">‹</button></div>${isT?'':'<button class="btn s" style="margin-bottom:10px" data-v="dtoday">برگرد به امروز</button>'}
-<div class="ch g" style="padding:12px 10px 8px"><div class="row"><h3>درآمد و خرج هفته</h3><div class="lg"><span><i style="background:var(--gr)"></i>درآمد</span><span><i style="background:var(--rd)"></i>خرج</span></div></div><svg viewBox="0 0 340 170" style="width:100%;display:block;margin-top:6px;direction:ltr" role="group" aria-label="نمودار هفتگی؛ روی هر روز بزنید"><line x1="0" x2="340" y1="130" y2="130" stroke="var(--gl)"/>${cap?`<line x1="0" x2="340" y1="${cy}" y2="${cy}" stroke="#c92d51" stroke-dasharray="4 3" stroke-width="1.3"/><text x="338" y="${cy-3}" text-anchor="end" font-size="9" fill="#c92d51">سقف روزانه (از بودجه)</text>`:''}${sv}</svg>${cap?'':'<div class="empty" style="padding:2px 0 4px;font-size:11px">با تعیین بودجه‌ی ماهانه در «تنظیمات»، خط سقف خرج روزانه هم نمایش داده می‌شود.</div>'}</div>
-<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:6px">${card('جمع درآمد',fa(tI),'var(--gr)')}${card('جمع خرج',fa(tE),'var(--rd)')}${card('مانده',fa(tI-tE),'var(--pr)')}</div><div style="font-size:12px;color:var(--mu);padding:0 4px 12px">میانگین خرج روزانه: ${fa(tE/7)} تومان</div>
-<div class="ch g"><div class="row"><h3>${jf(DY,{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</h3><small>مانده‌ی روز: <b style="color:var(--pr)">${fa(ci-ce)}</b></small></div>
-<h4 style="margin:12px 0 4px;color:var(--gr)">درآمدها · ${fa(ci)}</h4>${I.length?I.map(x=>item(x)).join(''):'<div class="empty" style="padding:8px">درآمدی ثبت نشده</div>'}<h4 style="margin:10px 0 4px;color:var(--rd)">خرج‌ها · ${fa(ce)}</h4>${E.length?E.map(x=>item(x)).join(''):'<div class="empty" style="padding:8px">خرجی ثبت نشده</div>'}</div>
-<div class="item g" style="display:block;background:rgba(47,111,228,.10)"><b style="color:var(--pr);font-size:13px">نسبت به ${wd(pd)}</b><div style="font-size:13px;line-height:1.9;margin-top:4px">${a1}<br>${a2}</div></div>
-<div class="row" style="gap:10px;margin-top:6px"><button class="btn" style="flex:1;background:var(--gr)" data-v="dadd" data-k="inc">+ درآمد</button><button class="btn" style="flex:1;background:var(--rd)" data-v="dadd" data-k="exp">+ خرج</button></div>`)}
-document.addEventListener('click',e=>{const b=e.target.closest('[data-v]');if(!b)return;const a=b.dataset.v;if(a==='dsel')daySheet(b.dataset.i);else if(a==='wk')daySheet(dayAdd(DY,+b.dataset.n));else if(a==='dtoday')daySheet(D());else if(a==='dadd'){addSheet(b.dataset.k);if(DY!==D())setJ(DY)}});
-document.addEventListener('keydown',e=>{const g=e.target&&e.target.getAttribute&&e.target.getAttribute('data-v')==='dsel'?e.target:null;if(g&&(e.key==='Enter'||e.key===' ')){e.preventDefault();daySheet(g.getAttribute('data-i'))}});
-(function(){const AP=CP('App');if(!AP)return;const out=()=>{try{(AP.minimizeApp||AP.exitApp).call(AP)}catch(e){try{AP.exitApp()}catch(_){}}};
-AP.addListener('backButton',()=>{if(document.querySelector('#lk'))return out();if(document.querySelector('#sh.o'))return close();out()});
-AP.addListener('appStateChange',s=>{if(s&&s.isActive){try{render();pxAuto()}catch(_){}}})})();
-render();
-
-;
-
-P.safe='M4 4h16v14H4zM8 18v2M16 18v2M15 11a3 3 0 11-6 0 3 3 0 016 0z';
-const SF=()=>S.sf=S.sf||[],SFK=['18','24','22','21'];let SFOK=0;
-const lnum=v=>{const x=parseFloat(String(v).replace(/[۰-۹]/g,c=>c.charCodeAt(0)-1776).replace(/[٠-٩]/g,c=>c.charCodeAt(0)-1632).replace(/[٫,٬]/g,m=>m==='٫'?'.':'').replace(/[^0-9.]/g,''));return isFinite(x)?Math.min(1e9,Math.max(0,x)):0};
-const sfN=v=>v.toLocaleString('fa-IR',{maximumFractionDigits:3}),pd=n=>String(n).replace(/\d/g,c=>'۰۱۲۳۴۵۶۷۸۹'[c]);
-function sfPrice(x){const p=S.px||{};if(x.t==='usd')return S.sfu||p.usd||0;if(x.t==='tmt')return S.sfm||0;const g=S.sfg||p.g18||0;return g?g*(+x.k||18)/18:0}
-const sfName=x=>x.t==='gold'?'طلای '+pd(x.k||18)+' عیار':x.t==='usd'?'دلار آمریکا':'منات ترکمنستان',sfUnit=x=>x.t==='gold'?'گرم':x.t==='usd'?'دلار':'منات';
-function sfGate(cb){if(!S.pin||Date.now()-SFOK<3e5)return cb();window.__sfcb=cb;
-open(`<h2>گاو صندوق قفل است</h2><input class="f" id="sfpw" type="password" autocomplete="off" placeholder="رمز عبور" aria-label="رمز عبور"><button class="btn" data-v="sfok">ورود</button>${S.bio?'<button class="btn" style="margin-top:8px;background:var(--pr)" data-v="sfbio">ورود با اثر انگشت</button>':''}`)}
-function safeSheet(){const A=SF(),R=A.map(x=>{const p=sfPrice(x);return{x,p,v:Math.round(x.q*p)}}),tot=R.reduce((s,r)=>s+r.v,0),by=t=>R.filter(r=>r.x.t===t).reduce((s,r)=>s+r.v,0),g=by('gold'),u=by('usd'),m=by('tmt'),pc=a=>tot?a/tot*100:0,miss=R.filter(r=>!r.p);
-const row=r=>{const x=r.x,c=x.t==='gold'?['rgba(217,180,106,.22)','#8a6410','Au']:x.t==='usd'?['rgba(15,157,110,.16)','#0b7d57','$']:['rgba(14,138,134,.16)','#0b6f6b','م'];
-return `<div class="item g" style="margin-bottom:8px"><div class="ic" style="background:${c[0]};color:${c[1]};font-weight:700">${c[2]}</div><div class="m"><b>${sfName(x)}${x.t==='tmt'&&S.sfm?' <small class="tag">قیمت دستی</small>':''}</b><small>${r.p?sfN(x.q)+' '+sfUnit(x)+' × '+fa(r.p):sfN(x.q)+' '+sfUnit(x)+' · <span style="color:var(--rd)">قیمت وارد نشده</span>'}${x.nt?' · '+esc(x.nt):''}</small></div><b>${r.p?mask(fa(r.v)):'—'}</b><button class="x" style="color:var(--pr)" data-v="sfedit" data-i="${x.id}" aria-label="ویرایش">✎</button><button class="x" data-v="sfdel" data-i="${x.id}" aria-label="حذف">✕</button></div>`},
-sec=(t,l,tt)=>R.some(r=>r.x.t===t)?`<div class="row" style="margin:12px 0 6px"><h3 style="margin:0">${l}</h3><b style="font-size:13px">${mask(fa(tt))} تومان</b></div>${R.filter(r=>r.x.t===t).map(row).join('')}`:'';
-open(`<h2>گاو صندوق</h2><div class="hero" style="margin-bottom:10px"><div class="sub">جمع سرمایه (به تومان)</div><div class="bal" style="font-size:32px">${mask(fa(tot))}</div><div class="sub">دلار و طلا: قیمت خودکار یا دستی · منات: دستی</div>${tot?`<div style="display:flex;height:12px;border-radius:8px;overflow:hidden;gap:2px;margin-top:14px" role="img" aria-label="سهم طلا ${pd(pc(g).toFixed(1))} درصد"><div style="flex:${pc(g)};background:#f3d38a"></div><div style="flex:${pc(u)};background:#5fe0b0"></div><div style="flex:${pc(m)};background:#8fd3ff"></div></div><div class="row" style="margin-top:8px;font-size:12px"><span>طلا ${sfN(+pc(g).toFixed(1))}٪</span><span>دلار ${sfN(+pc(u).toFixed(1))}٪</span><span>منات ${sfN(+pc(m).toFixed(1))}٪</span></div>`:''}</div>${miss.length?`<div class="item g" style="display:block;font-size:13px;color:var(--rd)">قیمت برای ${miss.length.toLocaleString('fa-IR')} ردیف وارد نشده و در جمع نیست. «ویرایش قیمت‌ها» را بزنید.</div>`:''}${A.length?sec('gold','طلا',g)+sec('usd','دلار',u)+sec('tmt','منات ترکمنستان',m):'<div class="empty">هنوز دارایی‌ای ثبت نشده. با «افزودن دارایی» شروع کنید.</div>'}${S.px&&S.px.tmt?`<p class="empty" style="font-size:12px;padding:6px 0">نرخ رسمی منات در منبع حدود ${fa(S.px.tmt)} تومان است و در جمع حساب نمی‌شود.</p>`:''}<p class="empty" style="font-size:11px;padding:4px 0 10px">این ارزش بر پایه‌ی قیمت بازار است؛ هنگام فروش، کارمزد و اجرت کم می‌شود. اطلاعات فقط روی همین گوشی ذخیره می‌شود و قفل برنامه رمزنگاری نیست.</p><div class="row" style="gap:10px"><button class="btn" style="flex:1" data-v="sfadd">+ افزودن دارایی</button><button class="btn" style="flex:1;background:var(--g);color:var(--pr);border:1px solid var(--pr)" data-v="sfp">ویرایش قیمت‌ها</button></div>`)}
-function sfForm(x){x=x||{};open(`<button class="link" data-v="safe">‹ بازگشت</button><h2>${x.id?'ویرایش':'افزودن'} دارایی</h2><select class="f" id="sft" aria-label="نوع" onchange="document.getElementById('sfkw').style.display=this.value==='gold'?'':'none'"><option value="gold">طلا (گرم)</option><option value="usd">دلار</option><option value="tmt">منات ترکمنستان</option></select><div id="sfkw"><select class="f" id="sfk" aria-label="عیار">${SFK.map(k=>`<option value="${k}">${pd(k)} عیار</option>`).join('')}</select></div><input class="f" id="sfq" inputmode="decimal" placeholder="مقدار (طلا: گرم، مثلاً ۱۲٫۵)" aria-label="مقدار" value="${x.q||''}"><input class="f" id="sfn" maxlength="60" placeholder="یادداشت (اختیاری)" aria-label="یادداشت" value="${esc(x.nt||'')}"><button class="btn" data-v="sfsave" data-i="${x.id||''}">ذخیره</button>`);if(x.t){$('#sft').value=x.t;$('#sfk').value=x.k||'18'}$('#sfkw').style.display=(x.t||'gold')==='gold'?'':'none'}
-function sfPriceForm(){const p=S.px||{},hint=v=>v?'خودکار: '+fa(v):'خودکار: —';open(`<button class="link" data-v="safe">‹ بازگشت</button><h2>قیمت‌ها (به تومان)</h2><small style="color:var(--mu)">خالی بگذارید تا قیمت خودکار استفاده شود.</small>${inp('pfu','دلار — '+hint(p.usd),1,S.sfu||'')}${inp('pfg','طلای ۱۸ عیار، هر گرم — '+hint(p.g18),1,S.sfg||'')}${inp('pfm','منات (فقط دستی)'+(p.tmt?' — نرخ رسمی منبع: '+fa(p.tmt):''),1,S.sfm||'')}<p class="empty" style="font-size:12px;padding:4px 0 8px">${S.sfmt?'آخرین ویرایش قیمت منات: '+tstr(S.sfmt):''}</p><button class="btn" data-v="sfps">ذخیره</button>`)}
-document.addEventListener('click',e=>{const b=e.target.closest('[data-v]');if(!b)return;const a=b.dataset.v,id=b.dataset.i;
-if(a==='safe')sfGate(safeSheet);else if(a==='sfadd')sfForm();else if(a==='sfedit')sfForm(SF().find(z=>String(z.id)===id));else if(a==='sfp')sfPriceForm();
-else if(a==='sfok'){if($('#sfpw').value===S.pin){SFOK=Date.now();const f=window.__sfcb;window.__sfcb=null;f&&f()}else{$('#sfpw').style.borderColor='var(--rd)';toast('رمز اشتباه است')}}
-else if(a==='sfbio'){bioVerify().then(ok=>{if(ok){SFOK=Date.now();const f=window.__sfcb;window.__sfcb=null;f&&f()}else toast('تأیید انجام نشد')})}
-else if(a==='sfsave'){const q=lnum($('#sfq').value),t=$('#sft').value;if(!q)return $('#sfq').style.borderColor='var(--rd)';const o={t,q,nt:$('#sfn').value.trim().slice(0,60)};if(t==='gold')o.k=$('#sfk').value;const ed=SF().find(z=>String(z.id)===id);if(ed){delete ed.k;Object.assign(ed,o)}else SF().push({id:Date.now(),...o});save();render();toast('ذخیره شد');safeSheet()}
-else if(a==='sfdel'){if(!b.dataset.c){b.dataset.c=1;b.textContent='حذف؟';b.style.color='var(--rd)';setTimeout(()=>{if(b.isConnected){delete b.dataset.c;b.textContent='✕'}},3000);return}S.sf=SF().filter(z=>String(z.id)!==id);save();render();safeSheet()}
-else if(a==='sfps'){const f=(k,t,v)=>{if(v){S[k]=v;if(t)S[t]=Date.now()}else{delete S[k];if(t)delete S[t]}};f('sfu','sfut',lnum($('#pfu').value)>0?Math.round(lnum($('#pfu').value)):0);f('sfg','sfgt',lnum($('#pfg').value)>0?Math.round(lnum($('#pfg').value)):0);f('sfm','sfmt',lnum($('#pfm').value)>0?Math.round(lnum($('#pfm').value)):0);save();toast('قیمت‌ها ذخیره شد');safeSheet()}});
-document.addEventListener('click',e=>{if(!e.target.closest('[data-v="bell"]'))return;setTimeout(()=>{const pb=document.querySelector('#sh [data-v="perm"]');if(!pb||pb.parentNode.querySelector('.lnst'))return;const nat=window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform(),ok=!!CP('LocalNotifications');pb.insertAdjacentHTML('afterend','<p class="empty lnst" style="font-size:12px;padding:6px 0 0">وضعیت: '+(ok?'افزونه‌ی اعلان اندروید فعال است'+(window.__lnErr?' (خطا: '+esc(window.__lnErr)+')':''):nat?'افزونه‌ی اعلان در این نسخه‌ی نصب‌شده نیست؛ APK جدید بسازید و نصب کنید':'اعلان گوشی فقط در اپ اندروید (یا مرورگرِ پشتیبان‌کننده) کار می‌کند')+'</p>')},60)});
-render();
-
-;
-
-(function(){const nat=window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform();
-const _ar=typeof appearanceRow==='function'?appearanceRow:null;
-if(_ar)appearanceRow=function(){return (window.__swWait?'<div class="set g"><span>نسخه‌ی جدید برنامه آماده است</span><button class="btn s" data-v="upd">به‌روزرسانی</button></div>':'')+_ar()};
-document.addEventListener('click',e=>{const b=e.target.closest('[data-v="upd"]');if(b&&window.__swWait){b.textContent='در حال به‌روزرسانی…';window.__swWait.postMessage('skip')}});
-if(!('serviceWorker' in navigator)||nat||location.protocol==='file:')return;
-navigator.serviceWorker.register('sw.js',{scope:'./'}).then(r=>{const ask=w=>{window.__swWait=w;try{toast('نسخه‌ی جدید آماده است؛ از «تنظیمات» به‌روزرسانی کنید')}catch(_){}};
-if(r.waiting&&navigator.serviceWorker.controller)ask(r.waiting);
-r.addEventListener('updatefound',()=>{const n=r.installing;n&&n.addEventListener('statechange',()=>{if(n.state==='installed'&&navigator.serviceWorker.controller)ask(n)})})}).catch(()=>{});
-let rl=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(rl)return;rl=true;location.reload()})})();
-
-;
-
-/* Hesabino V30: resilient back navigation for browser, PWA and Capacitor */
-(function () {
-  'use strict';
-  var modalDepth = 0, handlingPop = false, nativeListener = null;
-  function sheetIsOpen() {
-    var sh = document.getElementById('sh'), ov = document.getElementById('ov');
-    return !!((sh && sh.classList.contains('o')) || (ov && ov.classList.contains('o')));
-  }
-  function closeVisibleSheet() {
-    try {
-      if (typeof window.close === 'function') window.close();
-      else {
-        var sh = document.getElementById('sh'), ov = document.getElementById('ov');
-        if (sh) sh.classList.remove('o');
-        if (ov) ov.classList.remove('o');
-      }
-    } catch (_) {
-      var sh = document.getElementById('sh'), ov = document.getElementById('ov');
-      if (sh) sh.classList.remove('o');
-      if (ov) ov.classList.remove('o');
-    }
-  }
-  function showHomeSafely() {
-    try { if (typeof render === 'function') render(); } catch (e) {
-      var app = document.getElementById('app');
-      if (app) app.innerHTML = '<div class="empty g" style="margin:20px;padding:20px">بازگشت انجام شد. صفحه را دوباره باز کنید.</div>';
-    }
-    try { window.scrollTo({ top: 0, behavior: 'auto' }); } catch (_) { window.scrollTo(0, 0); }
-  }
-  /* Push a history entry for each sheet so Android/browser Back closes it first. */
-  var originalOpen = open;
-  if (typeof originalOpen === 'function') {
-    open = function () {
-      var result = originalOpen.apply(this, arguments);
-      if (!handlingPop) {
-        try {
-          history.pushState({ hesabinoSheet: true, t: Date.now() }, '', location.href);
-          modalDepth++;
-        } catch (_) {}
-      }
-      return result;
-    };
-  }
-  var originalClose = close;
-  if (typeof originalClose === 'function') {
-    close = function () {
-      var wasOpen = sheetIsOpen();
-      var result = originalClose.apply(this, arguments);
-      if (wasOpen && modalDepth > 0 && !handlingPop) {
-        modalDepth--;
-        try {
-          handlingPop = true;
-          history.back();
-          setTimeout(function () { handlingPop = false; }, 80);
-        } catch (_) { handlingPop = false; }
-      }
-      return result;
-    };
-  }
-  window.addEventListener('popstate', function () {
-    if (sheetIsOpen()) {
-      handlingPop = true;
-      closeVisibleSheet();
-      modalDepth = Math.max(0, modalDepth - 1);
-      setTimeout(function () { handlingPop = false; }, 50);
-    } else {
-      /* A stray browser history step should never leave a blank WebView. */
-      showHomeSafely();
-    }
-  });
-  /* Capacitor Android hardware/system back button. */
-  try {
-    var capApp = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App;
-    if (!capApp && window.Capacitor && typeof window.Capacitor.registerPlugin === 'function') {
-      capApp = window.Capacitor.registerPlugin('App');
-    }
-    if (capApp && typeof capApp.addListener === 'function') {
-      capApp.addListener('backButton', function () {
-        if (sheetIsOpen()) {
-          handlingPop = true;
-          closeVisibleSheet();
-          if (modalDepth > 0) {
-            modalDepth--;
-            try { history.back(); } catch (_) {}
-          }
-          setTimeout(function () { handlingPop = false; }, 80);
-        } else {
-          showHomeSafely();
-        }
-      }).catch(function () {});
-    }
-  } catch (_) {}
-})();
+list.push({id:900,title:
