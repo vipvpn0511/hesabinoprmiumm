@@ -39,6 +39,11 @@ jobs:
           distribution: temurin
           java-version: '21'
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
       - name: Install web dependencies
         run: npm install
 
@@ -52,6 +57,68 @@ jobs:
 
       - name: Generate Android project
         run: npx cap add android
+
+      - name: Apply Hesabino app icon and splash
+        run: |
+          pip install pillow
+          python - <<'PY'
+          import os
+          from PIL import Image, ImageDraw, ImageFilter
+          RES = 'android/app/src/main/res'
+          BG = (12, 33, 65)
+          src = Image.open('icon-512.png').convert('RGBA')
+
+          def feather(img):
+              w, h = img.size
+              m = Image.new('L', (w, h), 0)
+              i = int(w * 0.035)
+              ImageDraw.Draw(m).rectangle([i, i, w - i, h - i], fill=255)
+              m = m.filter(ImageFilter.GaussianBlur(w * 0.03))
+              out = img.copy()
+              out.putalpha(m)
+              return out
+
+          def masked(img, shape, frac=0.22):
+              w, h = img.size
+              m = Image.new('L', (w * 4, h * 4), 0)
+              dr = ImageDraw.Draw(m)
+              if shape == 'circle':
+                  dr.ellipse([0, 0, w * 4 - 1, h * 4 - 1], fill=255)
+              else:
+                  dr.rounded_rectangle([0, 0, w * 4 - 1, h * 4 - 1], radius=int(w * 4 * frac), fill=255)
+              out = img.copy()
+              out.putalpha(m.resize((w, h), Image.LANCZOS))
+              return out
+
+          sizes = {'mdpi': (48, 108), 'hdpi': (72, 162), 'xhdpi': (96, 216), 'xxhdpi': (144, 324), 'xxxhdpi': (192, 432)}
+          for name, (leg, fg) in sizes.items():
+              d = os.path.join(RES, 'mipmap-' + name)
+              os.makedirs(d, exist_ok=True)
+              base = src.resize((leg, leg), Image.LANCZOS)
+              masked(base, 'round').save(os.path.join(d, 'ic_launcher.png'))
+              masked(base, 'circle').save(os.path.join(d, 'ic_launcher_round.png'))
+              canvas = Image.new('RGBA', (fg, fg), (0, 0, 0, 0))
+              s = int(fg * 0.70)
+              ic = feather(src).resize((s, s), Image.LANCZOS)
+              canvas.paste(ic, ((fg - s) // 2, (fg - s) // 2), ic)
+              canvas.save(os.path.join(d, 'ic_launcher_foreground.png'))
+
+          os.makedirs(os.path.join(RES, 'values'), exist_ok=True)
+          with open(os.path.join(RES, 'values', 'ic_launcher_background.xml'), 'w') as f:
+              f.write('<?xml version="1.0" encoding="utf-8"?>\n<resources>\n    <color name="ic_launcher_background">#0C2141</color>\n</resources>\n')
+
+          for root, _, files in os.walk(RES):
+              for fn in files:
+                  if fn == 'splash.png':
+                      p = os.path.join(root, fn)
+                      w, h = Image.open(p).size
+                      img = Image.new('RGB', (w, h), BG)
+                      s = int(min(w, h) * 0.45)
+                      ic = src.resize((s, s), Image.LANCZOS)
+                      img.paste(ic, ((w - s) // 2, (h - s) // 2), ic)
+                      img.save(p)
+          print('icons done')
+          PY
 
       - name: Sync Capacitor
         run: npx cap sync android
