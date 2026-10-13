@@ -2,5 +2,7 @@
   "appId": "com.mobaileali.hesabino",
   "appName": "حسابینو",
   "webDir": "www",
-  "bundledWebRuntime": false
+  "plugins": {
+    "CapacitorHttp": { "enabled": true }
+  }
 }

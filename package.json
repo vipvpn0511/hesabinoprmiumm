@@ -1,13 +1,7 @@
 {
-  "name": "hesabino-v30-ultimate",
-  "version": "30.0.0",
+  "name": "hesabino",
+  "version": "1.2.0",
   "private": true,
-  "description": "حسابینو V30 Ultimate - مدیریت مالی فارسی",
-  "scripts": {
-    "check": "node --check app.js && node tests/smoke-test.js",
-    "test": "npm run check",
-    "android:sync": "npx cap sync android"
-  },
   "dependencies": {
     "@capacitor/android": "^7.0.0",
     "@capacitor/app": "^7.0.0",
