@@ -1,5 +1,5 @@
-const V='hesabino-v30-stable-1';
-const A=['./','index.html','manifest.json','icon-192.png','icon-512.png','mascot.svg'];
+const V='hesabino-v30-appjs-complete-2';
+const A=['./','index.html','manifest.json','icon-192.png','icon-512.png','mascot.svg','app.js'];
 self.addEventListener('install',e=>{
   e.waitUntil((async()=>{const c=await caches.open(V);for(const u of A){try{await c.add(u)}catch(err){/* one optional asset must not abort the whole install */}}await self.skipWaiting()})());
 });
