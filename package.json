@@ -2,6 +2,9 @@
   "name": "hesabino",
   "version": "1.2.0",
   "private": true,
+  "scripts": {
+    "test": "node --check app.js && node --check sw.js"
+  },
   "dependencies": {
     "@capacitor/android": "^7.0.0",
     "@capacitor/app": "^7.0.0",
